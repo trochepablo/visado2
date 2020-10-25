@@ -1,0 +1,170 @@
+{
+  "rootObjects": [
+    {
+      "id": "__00001__",
+      "name": null
+    }
+  ],
+  "objects": {
+    "__00001__": {
+      "artists": "__00002__",
+      "playlists": "__00003__",
+      "users": "__00004__",
+      "idIncrementArtist": "__00005__",
+      "idIncrementPlaylist": "__00006__",
+      "idIncrementAlbum": "__00007__",
+      "idIncrementTrack": "__00008__",
+      "idIncrementUser": "__00009__"
+    },
+    "__00002__": {
+      "0": "__00010__"
+    },
+    "__00003__": {},
+    "__00004__": {
+      "0": "__00011__"
+    },
+    "__00005__": {
+      "id": 1
+    },
+    "__00006__": {
+      "id": 0
+    },
+    "__00007__": {
+      "id": 1
+    },
+    "__00008__": {
+      "id": 6
+    },
+    "__00009__": {
+      "id": 1
+    },
+    "__00010__": {
+      "name": "Guns n Roses",
+      "country": "USA",
+      "albums": "__00012__",
+      "id": 1
+    },
+    "__00011__": {
+      "name": "alan",
+      "tracksHeard": "__00013__",
+      "id": 1
+    },
+    "__00012__": {
+      "0": "__00014__"
+    },
+    "__00013__": {
+      "0": "__00015__",
+      "1": "__00016__",
+      "2": "__00017__"
+    },
+    "__00014__": {
+      "name": "Appetite for Destruction",
+      "year": 1987,
+      "tracks": "__00018__",
+      "id": 1
+    },
+    "__00015__": {
+      "name": "Welcome to the jungle",
+      "genres": "__00019__",
+      "duration": 200,
+      "numberOfTimesListened": 1,
+      "id": 1
+    },
+    "__00016__": {
+      "name": "Welcome to the jungle",
+      "genres": "__00020__",
+      "duration": 200,
+      "numberOfTimesListened": 1,
+      "id": 2
+    },
+    "__00017__": {
+      "name": "Welcome to the jungle",
+      "genres": "__00021__",
+      "duration": 200,
+      "numberOfTimesListened": 1,
+      "id": 3
+    },
+    "__00018__": {
+      "0": "__00015__",
+      "1": "__00016__",
+      "2": "__00017__",
+      "3": "__00022__",
+      "4": "__00023__",
+      "5": "__00024__"
+    },
+    "__00019__": {
+      "0": "rock",
+      "1": "hardrock"
+    },
+    "__00020__": {
+      "0": "rock",
+      "1": "hardrock"
+    },
+    "__00021__": {
+      "0": "rock",
+      "1": "hardrock"
+    },
+    "__00022__": {
+      "name": "Welcome to the jungle",
+      "genres": "__00025__",
+      "duration": 200,
+      "numberOfTimesListened": 0,
+      "id": 4
+    },
+    "__00023__": {
+      "name": "Welcome to the jungle",
+      "genres": "__00026__",
+      "duration": 200,
+      "numberOfTimesListened": 0,
+      "id": 5
+    },
+    "__00024__": {
+      "name": "Welcome to the jungle",
+      "genres": "__00027__",
+      "duration": 200,
+      "numberOfTimesListened": 0,
+      "id": 6
+    },
+    "__00025__": {
+      "0": "rock",
+      "1": "hardrock"
+    },
+    "__00026__": {
+      "0": "rock",
+      "1": "hardrock"
+    },
+    "__00027__": {
+      "0": "rock",
+      "1": "hardrock"
+    }
+  },
+  "types": {
+    "__00001__": "UNQfy",
+    "__00002__": "Array",
+    "__00003__": "Array",
+    "__00004__": "Array",
+    "__00005__": "IdAutoIncrement",
+    "__00006__": "IdAutoIncrementPlaylist",
+    "__00007__": "IdAutoIncrement",
+    "__00008__": "IdAutoIncrement",
+    "__00009__": "IdAutoIncrement",
+    "__00010__": "Author",
+    "__00011__": "User",
+    "__00012__": "Array",
+    "__00013__": "Array",
+    "__00014__": "Album",
+    "__00015__": "Track",
+    "__00016__": "Track",
+    "__00017__": "Track",
+    "__00018__": "Array",
+    "__00019__": "Array",
+    "__00020__": "Array",
+    "__00021__": "Array",
+    "__00022__": "Track",
+    "__00023__": "Track",
+    "__00024__": "Track",
+    "__00025__": "Array",
+    "__00026__": "Array",
+    "__00027__": "Array"
+  }
+}

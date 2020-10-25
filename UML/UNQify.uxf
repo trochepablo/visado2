@@ -1,0 +1,172 @@
+<diagram program="umletino" version="14.4.0-SNAPSHOT"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>2590</x><y>900</y><w>210</w><h>140</h></coordinates><panel_attributes>&lt;&lt;Author&gt;&gt;
+--
+-id: Long
+-name: String
+-origin: String
+-yearsActive: String
+webSite: String
+--
+#Operation(i: int): int
+/+AbstractOperation()/</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>2200</x><y>900</y><w>210</w><h>140</h></coordinates><panel_attributes>&lt;&lt;Track&gt;&gt;
+--
+-id: Long
+-name: String
+-duration: Decimal
+-format: String
+-genders: Array&lt;String&gt;
+--
+#Operation(i: int): int
+/+AbstractOperation()/</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1790</x><y>900</y><w>210</w><h>150</h></coordinates><panel_attributes>&lt;&lt;Album&gt;&gt;
+--
+-id: Long
+-name: String
+-publishDate: Date
+-recordCompany: String
+-duration: Decimal
+--
+#Operation(i: int): int
+/+AbstractOperation()/</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1860</x><y>660</y><w>380</w><h>140</h></coordinates><panel_attributes>&lt;&lt;Playlist&gt;&gt;
+--
+-id: Long
+-name: String
+-duration: Decimal
+-genres: Array
+--
+#calculateDuration(): int
+#hasTrack(aTrack: Object): Object
+#generateListByGenres(tracks: Array, maxDuration: int): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1990</x><y>950</y><w>230</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=0..n
+m2=0..1
+Tracks &gt;</panel_attributes><additional_attributes>210;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1870</x><y>1030</y><w>860</w><h>80</h></coordinates><panel_attributes>lt=-
+m1=0..1
+m2=0..n
+&lt; Albums</panel_attributes><additional_attributes>820;10;820;60;10;60;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>2020</x><y>790</y><w>330</w><h>130</h></coordinates><panel_attributes>lt=-
+m1=0..1
+m2=0..n
+Songs &gt;</panel_attributes><additional_attributes>10;10;10;60;290;60;290;110</additional_attributes></element><element><id>UMLPackage</id><coordinates><x>1770</x><y>620</y><w>1050</w><h>510</h></coordinates><panel_attributes>Subsystems
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1950</x><y>220</y><w>540</w><h>280</h></coordinates><panel_attributes>&lt;&lt;Unqfy&gt;&gt;
+--
+--
+#addArtist(artistData: Author): Author
+#addAlbum(artistId: Long, albumData): Album
+#addTrack(albumId, trackData): Track
+#getArtistById(id: Long): Author
+#getAlbumById(id: Long): Album
+#getTrackById(id: Long): Track
+#getPlaylistById(id: Long): Playlist
+#getTracksMatchingGenres(genres: Array&lt;String&gt;): Array&lt;Track&gt;
+#getTracksMatchingArtist(artistName: String): Array&lt;Track&gt;
+#createPlaylist(name: String, genresToInclude: Array&lt;String&gt;, #maxDuration: Decimal): Playlist,
+#printArtists(): void,
+#printAlbums(): void,
+#printPlaylists(): void,
+#printTracks(): void,
+#printPrincipalInfo(content: object): void,
+#isDetail(propertie: Array): void</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>2480</x><y>300</y><w>250</w><h>620</h></coordinates><panel_attributes>lt=-
+m1=0..n
+m2=0..1
+Author &gt;</panel_attributes><additional_attributes>180;600;180;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1970</x><y>490</y><w>90</w><h>190</h></coordinates><panel_attributes>lt=-
+m1=0..1
+m2=0..n
+playlists &gt;</panel_attributes><additional_attributes>10;10;10;170</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1520</x><y>160</y><w>240</w><h>120</h></coordinates><panel_attributes>&lt;&lt;IOperation&gt;&gt;
+--
+-unqfy: Object
+--
+#execute() : void
+#paramsBuilder(args: Array): Object
+#parseValueByType(value): value
+setUNQfy(unqfy: Object)
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1640</x><y>360</y><w>180</w><h>100</h></coordinates><panel_attributes>&lt;&lt;GetPlaylistByIdCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1240</x><y>0</y><w>170</w><h>120</h></coordinates><panel_attributes>&lt;&lt;Client&gt;&gt;
+main
+--
+#main()
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1400</x><y>60</y><w>140</w><h>190</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>120;170;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1450</x><y>360</y><w>170</w><h>100</h></coordinates><panel_attributes>&lt;&lt;CreatePlaylistCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1470</x><y>270</y><w>170</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>150;10;150;60;80;60;80;90;10;90</additional_attributes></element><element><id>UMLNote</id><coordinates><x>2380</x><y>250</y><w>100</w><h>50</h></coordinates><panel_attributes>Note..
+&lt;&lt;Receiver&gt;&gt;</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>350</y><w>1880</w><h>170</h></coordinates><panel_attributes>lt=-
+m1=0..1
+
+ </panel_attributes><additional_attributes>1860;10;1770;10;1770;150;10;150</additional_attributes></element><element><id>Relation</id><coordinates><x>1610</x><y>270</y><w>130</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;60;110;60;110;90</additional_attributes></element><element><id>UMLNote</id><coordinates><x>1620</x><y>80</y><w>140</w><h>70</h></coordinates><panel_attributes>Note..
+Command pattern</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1380</x><y>600</y><w>290</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Usuario&gt;&gt;
+
+--
+-id: Long 
+--
+#listenToTrack(Track) : void
+#songHeard() : List&lt;Track&gt;
+#howManyTimesDoIListen(Track) : Int
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1510</x><y>780</y><w>740</w><h>140</h></coordinates><panel_attributes>lt=-
+m1=0..n
+m2=0..1
+Tracks &gt;</panel_attributes><additional_attributes>700;120;700;90;10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>1730</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>UMLClass</id><coordinates><x>1260</x><y>360</y><w>170</w><h>100</h></coordinates><panel_attributes>&lt;&lt;AddAlbumCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>360</y><w>170</w><h>100</h></coordinates><panel_attributes>&lt;&lt;AddArtistCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1080</x><y>360</y><w>170</w><h>100</h></coordinates><panel_attributes>&lt;&lt;GetAlbumByIdCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>360</y><w>170</w><h>100</h></coordinates><panel_attributes>&lt;&lt;GetArtistByIdCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>360</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;GetTracksMatchingArtistCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>190</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;AddTrackCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>720</x><y>190</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;GetTrackByIdCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>960</x><y>190</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;GetTracksMatchingGenresCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>600</x><y>280</y><w>30</w><h>100</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>800</x><y>280</y><w>30</w><h>100</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>1020</x><y>280</y><w>30</w><h>100</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>310</y><w>1480</w><h>40</h></coordinates><panel_attributes></panel_attributes><additional_attributes>1460;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>1150</x><y>320</y><w>30</w><h>60</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>Relation</id><coordinates><x>1330</x><y>320</y><w>30</w><h>60</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;40</additional_attributes></element><element><id>UMLClass</id><coordinates><x>240</x><y>360</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;ListPlaylistsCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>360</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;ListArtistsCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>240</x><y>190</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;ListTracksCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>190</y><w>230</w><h>100</h></coordinates><panel_attributes>&lt;&lt;ListAlbumsCommand&gt;&gt;
+--
+unqFy: Unqfy
+--
+#execute() : void
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>350</x><y>280</y><w>30</w><h>100</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>280</y><w>30</w><h>100</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>90</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>340</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>590</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>800</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>980</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>1160</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element><element><id>Relation</id><coordinates><x>1330</x><y>450</y><w>30</w><h>70</h></coordinates><panel_attributes></panel_attributes><additional_attributes>10;10;10;50</additional_attributes></element></diagram>
