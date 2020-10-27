@@ -7,18 +7,8 @@ const commands = require('./src/commands/index');
 // const commandos = new Map();
 // commandos.set("addTrack", AddTrackCommand);
 
-// Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
-function getUNQfy(filename = 'data.json') {
-  let unqfy = new unqmod.UNQfy();
-  if (fs.existsSync(filename)) {
-    unqfy = unqmod.UNQfy.load(filename);
-  }
-  return unqfy;
-}
 
-function saveUNQfy(unqfy, filename = 'data.json') {
-  unqfy.save(filename);
-}
+
 
 /*
  En esta funcion deberán interpretar los argumentos pasado por linea de comandos

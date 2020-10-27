@@ -376,11 +376,11 @@ class UNQfy {
 
   getUser(id) {
     return this.users.filter(u => u.id === id)[0];
-  } 
+  }
 
-  userListensToATrack(idUser,idTrack) {
+  userListensToATrack(idUser, idTrack) {
     const user = this.getUser(idUser);
-    const track = this.getTrackById(idTrack); 
+    const track = this.getTrackById(idTrack);
     user.setTrack(track);
   }
 
@@ -397,14 +397,14 @@ class UNQfy {
   }
 
   //Armar automáticamente  e imprimir en pantalla la lista "This is ..." .
-   //Esta lista contiene los 3 temas más escuchados de un artista dado.
-   //Tenga en cuenta que esta lista siempre es calculada "on the fly".
+  //Esta lista contiene los 3 temas más escuchados de un artista dado.
+  //Tenga en cuenta que esta lista siempre es calculada "on the fly".
   playslistAutomatica(duration) {
-    
+
   }
-   
-  
-  
+
+
+
   searchByName(name) {
     const artists = this.artists.filter(artist => artist.name.includes(name));
     const albums = this.artists.flatMap(artist => artist.albums.filter(album => album.name.includes(name)));
@@ -417,6 +417,18 @@ class UNQfy {
     const serializedData = picklify.picklify(this);
     fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
   }
+  // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
+  getUNQfy(filename = 'data.json') {
+    let unqfy = new unqmod.UNQfy();
+    if (fs.existsSync(filename)) {
+      unqfy = unqmod.UNQfy.load(filename);
+    }
+    return unqfy;
+  }
+
+  saveUNQfy(unqfy, filename = 'data.json') {
+    unqfy.save(filename);
+  }
 
   static load(filename) {
     const serializedData = fs.readFileSync(filename, { encoding: 'utf-8' });
@@ -424,6 +436,7 @@ class UNQfy {
     const classes = [UNQfy, Author, IdAutoIncrement, IdAutoIncrementPlaylist, Album, Track, User, Playlist];
     return picklify.unpicklify(JSON.parse(serializedData), classes);
   }
+
 
 }
 
