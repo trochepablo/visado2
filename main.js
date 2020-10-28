@@ -1,13 +1,12 @@
 const fs = require('fs'); // necesitado para guardar/cargar unqfy
 const unqmod = require('./unqfy'); // importamos el modulo unqfy
 const commands = require('./src/commands/index');
-
+const unqfyInstance = new unqmod.UNQfy();
+const SAVE_FILENAME = 'data.json';
 // contrucción mapa de comandos
 // eslint-disable-next-line no-undef
 // const commandos = new Map();
 // commandos.set("addTrack", AddTrackCommand);
-
-
 
 
 /*
@@ -44,11 +43,11 @@ function main() {
   try {
     const commandIn = process.argv.slice(2).shift(); // obtengo el commando enviado por parametro, que es el tercer argumento
     const command = commands.get(commandIn.toUpperCase()).prototype; // obtengo la clase del comando por polimorfismo
-    const unqFy = getUNQfy();
+    const unqFy = unqfyInstance.getUNQfy();
     command.setUNQfy(unqFy);
     const params = process.argv.slice(3);
     command.execute(params); // ejecuto comando y envio el resto de los argumentos
-    saveUNQfy(unqFy);
+    command.unqfy.save();
   } catch (error) {
     console.log("Hubo un problema, vuelva a intentar verificando los datos ingresados.", error);
   }

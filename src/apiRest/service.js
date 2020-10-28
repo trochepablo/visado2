@@ -6,6 +6,7 @@ const albums = express();
 const tracks = express();
 const playlists = express();
 const users = express();
+const SAVE_FILENAME = 'data.json';
 const router = express.Router();
 const bodyParse = require('body-parser');
 const port = process.env.PORT || 8083;
@@ -15,9 +16,10 @@ console.log(unqfy);
 
 artists.post('/artists', function(req,res) {
     console.log(req.body);
-    unqfy.addArtist(req.body);
-    res.status(201).json({message: `the artist: ${req.body} has been successfully created`});
-    next();
+    req.unqfy.addArtist(req.body);
+    req.unqfy.save();
+    res.status(201).json({message: `the artist: ${req.body.name} has been successfully created`});
+    
 });
 
 artists.get('/artists/artistId', function(req,res) {
@@ -25,7 +27,7 @@ artists.get('/artists/artistId', function(req,res) {
     const artistId = res.params.artistId;
     console.log(unqfy.getArtistById(artistId));
     res.status(200).json({artist: unqfy.getArtistById(artistId).name});
-    next();
+  
 });
 
 artists.put('/artists/artistId', function(req,res) {
@@ -33,7 +35,7 @@ artists.put('/artists/artistId', function(req,res) {
     const artistId = res.params.artistId;
     //unqfy.
     res.status(204).json({message: `the artist: ${req.body.name} has been successfully updated`});
-    next();
+  
 });
 
 
@@ -42,11 +44,11 @@ artists.delete('/artists/artistId', function(req,res) {
     const artistId = res.params.archivoId;
     unqfy.removeArtist(artistId);
     res.status(204).json({message: `delete artist:${artistId}`})
-    next();
+  
 });
 
 rootApp.use((req,res,next) => {
-   req.unqfy = getUNQfy(SAVE_FILENAME);
+   req.unqfy =  unqfy.getUNQfy();
    next();
 });
 

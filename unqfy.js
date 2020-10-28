@@ -8,6 +8,7 @@ const Playlist = require('./src/entity/Playlist');
 const Album = require('./src/entity/Album');
 const Track = require('./src/entity/Track');
 const User = require('./src/entity/User');
+const SAVE_FILENAME = 'data.json';
 
 class UNQfy {
 
@@ -413,15 +414,15 @@ class UNQfy {
     return { artists, albums, tracks, playlists };
   }
 
-  save(filename) {
+  save() {
     const serializedData = picklify.picklify(this);
-    fs.writeFileSync(filename, JSON.stringify(serializedData, null, 2));
+    fs.writeFileSync(SAVE_FILENAME, JSON.stringify(serializedData, null, 2));
   }
   // Retorna una instancia de UNQfy. Si existe filename, recupera la instancia desde el archivo.
-  getUNQfy(filename = 'data.json') {
-    let unqfy = new unqmod.UNQfy();
-    if (fs.existsSync(filename)) {
-      unqfy = unqmod.UNQfy.load(filename);
+  getUNQfy() {
+    let unqfy = new UNQfy();
+    if (fs.existsSync(SAVE_FILENAME)) {
+      unqfy = UNQfy.load(SAVE_FILENAME);
     }
     return unqfy;
   }
