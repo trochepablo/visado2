@@ -9,6 +9,7 @@ const users = express();
 const SAVE_FILENAME = 'data.json';
 const router = express.Router();
 const bodyParse = require('body-parser');
+const { json } = require('express');
 const port = process.env.PORT || 8083;
 const unqfy = new unq.UNQfy();
 
@@ -47,6 +48,46 @@ artists.delete('/artists/artistId', function(req,res) {
   
 });
 
+albums.post('/albums', (req, res) => {
+    const params = req.body;
+    const albumParam = { name: params.name, year: params.year };
+    const newAlbum = unqfy.addAlbum(params.artistId, albumParam);
+    res.status(201).json(JSON.stringify(newAlbum));
+})
+
+albums.get('/albums/:albumId', (req, res) => {
+    const albumId = req.params['albumId'];
+    const album = unqfy.getAlbumById(albumId);
+    res.status(200).json(JSON.stringify(album));
+})
+
+albums.put('/albums/:albumId', (req, res) => {
+    const albumId = req.params['albumId'];
+    const album = unqfy.getAlbumById(albumId);
+    album.year = req.body.year;
+    unqfy.removeAlbum(albumId);
+    unqfy.addAlbum(album);
+    res.status(200).json(JSON.stringify(album));
+})
+
+albums.delete('/albums/:albumId', (req, res) => {
+    const albumId = req.params['albumId'];
+    unqfy.removeAlbum(albumId);
+    res.status(204);
+})
+
+albums.get('/albums', (req, res) => {
+    const nameQueryParam = req.query.name
+    const albums = unqfy.searchAlbumByName(nameQueryParam);
+    res.status(200).json(albums);
+})
+
+tracks.get('/tracks/:trackId/lyrics', (req, res) => {
+    const trackId = req.params['trackId'];
+    const lyric = unqfy.searchLyrickByTrackName(trackId);
+    res.status(200).json({Name: trackId, lyrics: lyric});
+})
+
 rootApp.use((req,res,next) => {
    req.unqfy =  unqfy.getUNQfy();
    next();
@@ -56,9 +97,9 @@ rootApp.use(bodyParse.urlencoded({ extended: true }));
 rootApp.use(bodyParse.json());
 rootApp.use('/api', artists,albums,tracks,playlists,users);
 
-rootApp.use((req,res) => {
-    res.status(404);
-    res.json({status: 404, errorCode: 'RESOURCE_NOT_FOUND'});
-});
+// rootApp.use((req,res) => {
+//     res.status(404);
+//     res.json({status: 404, errorCode: 'RESOURCE_NOT_FOUND'});
+// });
 
 rootApp.listen(port, () => console.log('Listening on ' + port));
