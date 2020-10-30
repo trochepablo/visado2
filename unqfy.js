@@ -60,6 +60,8 @@ class UNQfy {
   searchAlbumByName(name) {
     return this.artists.flatMap(artist => artist.albums.some(album => album.name === name));
   }
+
+
   // albumData: objeto JS con los datos necesarios para crear un album
   //   albumData.name (string)
   //   albumData.year (number)
@@ -426,8 +428,6 @@ class UNQfy {
 
   }
 
-
-
   searchByName(name) {
     const artists = this.artists.filter(artist => artist.name.includes(name));
     const albums = this.artists.flatMap(artist => artist.albums.filter(album => album.name.includes(name)));
@@ -436,6 +436,9 @@ class UNQfy {
     return { artists, albums, tracks, playlists };
   }
 
+  getLyrics() {
+    
+  }
   save() {
     const serializedData = picklify.picklify(this);
     fs.writeFileSync(SAVE_FILENAME, JSON.stringify(serializedData, null, 2));

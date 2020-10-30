@@ -9,37 +9,41 @@ let options = {
     json: true // Automatically parses the JSON string in the response
 };
 
-rp.get(
-    options.uri = options.uri + `/track.lyrics.get?track_id=15953433`  //track.lyrics.get?track_id=${id}
-).then((response) => {
-    var header = response.message.header;
-    var body = response.message.body;
-    if (header.status_code !== 200) {
+function getLyrics(id) {
+   options.uri = options.uri + `/track.lyrics.get?track_id=${id}`;
+   
+   rp.get( 
+       options
+   ).then((response) => {
+       let header = response.message.header;
+       let body = response.message.body;
+       if (header.status_code !== 200) {
+          throw new Error('status code != 200');
+       }
+       let lyrics = body.lyrics.lyrics_body;
+       console.log(lyrics);
+       return lyrics;
+   }).catch((error) => {
+      console.log('algo salio mal', error);
+   });
+}
+
+function getIdTrack(title) {
+  
+  options.uri = options.uri + `/track.search?q_track=${title}`;
+
+   rp.get(options 
+   ).then((response) => {
+      //var header = response.message.header;
+      let body = response.message.body;
+      if (header.status_code !== 200) {
         throw new Error('status code != 200');
-    }
-    console.log(body.lyrics.lyrics_body);
-    var lyrics = body.lyrics.lyrics_body;
-    console.log(lyrics);
-    return lyrics;
-}).catch((error) => {
-    console.log('algo salio mal', error);
-});
-
-
-
-rp.get(
-    options.uri = options.uri+`/track.search?q_track=%22Nothing%20Else%20Matters%22` // `/track.search?q_track=${string}`
-).then((response) => {
-    console.log(options.uri);
-    //var header = response.message.header;
-    var body = response.message.body;
-    if (header.status_code !== 200) {
-        throw new Error('status code != 200');
-    }
-    console.log(body);
-    var lyrics = body;
-    console.log(lyrics);
-    return lyrics;
-}).catch((error) => {
-    console.log('algo salio mal', error);
-});
+      }
+      console.log(body);
+      let lyrics = body;
+      console.log(lyrics);
+      return lyrics;
+   }).catch((error) => {
+      console.log('algo salio mal', error);
+   });
+}
