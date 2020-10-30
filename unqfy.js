@@ -66,6 +66,8 @@ class UNQfy {
   searchAlbumByName(name) {
     return this.artists.flatMap(artist => artist.albums.some(album => album.name === name));
   }
+
+
   // albumData: objeto JS con los datos necesarios para crear un album
   //   albumData.name (string)
   //   albumData.year (number)
@@ -134,7 +136,7 @@ class UNQfy {
   }
 
   getArtistById(id) {
-    const artist = this.artists.filter(a => a.id === parseInt(id.id))[0];
+    const artist = this.artists.filter(a => a.id === parseInt(id))[0];
     return artist;
   }
 
@@ -161,6 +163,18 @@ class UNQfy {
   getPlaylistById(id) {
     const playlist = this.playlists.filter(p => p.id === id);
     return playlist;
+  }
+
+  searchPlaylist(name, durationLT ,durationGT) {
+    return this.playlists.filter(p => p.getName().toUpperCase().includes(name) && p.getDuration() < durationLT && p.getDuration() > durationGT);
+  }
+  
+
+  removePlaylist(id) {
+    const index = this.playlists.findIndex(p => p.id === id);
+    if (index !== -1) {
+      this.artists.splice(index, 1);
+    }
   }
 
   removeArtist(id) {
@@ -198,6 +212,16 @@ class UNQfy {
     const index = tracks.findIndex(t => t.id === id);
     tracks.splice(index, 1);
   }
+  
+  updateArtist(id, artist) {
+    const artistUpdate = this.artists.filter(a => a.id === id)[0];
+    artistUpdate.setName(artist.name);
+    artistUpdate.setCountry(artist.country);
+    const index = this.artists.findIndex(a => a.id === id);
+    this.artists.splice(index, 1,artistUpdate);
+    return artistUpdate;
+  }
+
 
   removeTrack(id) {
     const artist = this.getArtistAlbumTrack(id);
@@ -410,16 +434,6 @@ class UNQfy {
 
   }
 
-  async populateAlbumsForArtist(artistName) {
-    const artist = this.searchArtistByName(artistName);
-    const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
-    .then(albums => 
-      albums.map(album => new Album(album.name, album.release_date))
-    );
-    albums.forEach(album => this.addAlbum(artist.id, album));
-    this.save();
-  }
-
   searchByName(name) {
     const artists = this.artists.filter(artist => artist.name.includes(name));
     const albums = this.artists.flatMap(artist => artist.albums.filter(album => album.name.includes(name)));
@@ -428,6 +442,9 @@ class UNQfy {
     return { artists, albums, tracks, playlists };
   }
 
+  getLyrics() {
+    
+  }
   save() {
     const serializedData = picklify.picklify(this);
     fs.writeFileSync(SAVE_FILENAME, JSON.stringify(serializedData, null, 2));

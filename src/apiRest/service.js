@@ -6,46 +6,44 @@ const albums = express();
 const tracks = express();
 const playlists = express();
 const users = express();
-const SAVE_FILENAME = 'data.json';
 const router = express.Router();
 const bodyParse = require('body-parser');
 const { json } = require('express');
 const port = process.env.PORT || 8083;
 const unqfy = new unq.UNQfy();
 
-console.log(unqfy);
-
 artists.post('/artists', function(req,res) {
-    console.log(req.body);
-    req.unqfy.addArtist(req.body);
+    const artist = req.unqfy.addArtist(req.body);
     req.unqfy.save();
-    res.status(201).json({message: `the artist: ${req.body.name} has been successfully created`});
-    
-});
-
-artists.get('/artists/artistId', function(req,res) {
-    console.log("GET");
-    const artistId = res.params.artistId;
-    console.log(unqfy.getArtistById(artistId));
-    res.status(200).json({artist: unqfy.getArtistById(artistId).name});
-  
-});
-
-artists.put('/artists/artistId', function(req,res) {
-    console.log("PUT");
-    const artistId = res.params.artistId;
-    //unqfy.
-    res.status(204).json({message: `the artist: ${req.body.name} has been successfully updated`});
-  
+    res.status(201).json(artist);
 });
 
 
-artists.delete('/artists/artistId', function(req,res) {
-    console.log("DELETE");
-    const artistId = res.params.archivoId;
-    unqfy.removeArtist(artistId);
+artists.get('/artists/:artistId', function(req,res) {
+    const artistId = parseInt(req.params.artistId);
+    res.status(200).json(req.unqfy.getArtistById(artistId));
+});
+
+
+artists.put('/artists/:artistId', function(req,res) {
+    const artistId = parseInt(req.params.artistId);
+    const artist = req.unqfy.updateArtist(artistId, req.body);
+    req.unqfy.save();
+    res.status(200).json(artist);
+});
+
+
+artists.delete('/artists/:artistId', function(req,res) {
+    const artistId = parseInt(req.params.artistId);
+    req.unqfy.removeArtist(artistId);
+    req.unqfy.save();
     res.status(204).json({message: `delete artist:${artistId}`})
-  
+});
+
+//Consultar
+artists.get('/artists', function(req,res) {
+    const name = req.query.name;
+    res.status(200).json(req.unqfy.getArtistsByName(name));
 });
 
 albums.post('/albums', (req, res) => {
@@ -87,6 +85,42 @@ tracks.get('/tracks/:trackId/lyrics', (req, res) => {
     const lyric = unqfy.searchLyrickByTrackName(trackId);
     res.status(200).json({Name: trackId, lyrics: lyric});
 })
+
+playlists.post('/playlists', function(req,res) {
+    const track = req.unqfy.addTrack(req.body);
+    req.unqfy.save();
+    res.status(200).json(track);
+});
+
+playlists.post('/playlists/:artistId', function(req,res) {
+    const track = req.unqfy.addTrack(req.body);
+    req.unqfy.save();
+    res.status(200).json(track);
+});
+
+playlists.get('/playlists/:playlistId', function(req,res) {
+    const playlistId = parseInt(req.params.artistId);
+    res.status(200).json(req.unqfy.getPlaylistById(playlistId));
+});
+
+
+playlists.delete('/playlists/:playlistId', function(req,res) {
+    const playlistId = parseInt(req.params.artistId);
+    req.unqfy.removePlaylist(playlistId);
+    req.unqfy.save();
+    res.status(204).json({message: `delete artist:${playlistId}`})
+});
+
+playlists.get('/playlists', function(req,res) {
+    const name = req.query.name;
+    const durationLT = parseInt(req.query.durationGT);
+    const durationGT = parseInt(req.query.durationGT);
+    console.log(name);
+    console.log(durationLT);
+    console.log(durationGT);
+    const params =  {name: name, durationGT: durationGT ,durationLT: durationLT}
+    res.status(200).json(req.unqfy.searchPlaylist(name, durationLT, durationGT));
+});
 
 rootApp.use((req,res,next) => {
    req.unqfy =  unqfy.getUNQfy();
