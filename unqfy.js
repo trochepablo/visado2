@@ -14,6 +14,7 @@ const spotifyClientInstance = new spoCliente.SpotifyCliente();
 const clienteMusixMatch = require('./src/clientApi/ClientMusixMatch');
 const clienteMusixMatchIstance = new clienteMusixMatch();
 
+
 class UNQfy {
 
   constructor() {
@@ -435,6 +436,16 @@ class UNQfy {
   //Tenga en cuenta que esta lista siempre es calculada "on the fly".
   playslistAutomatica(duration) {
 
+  }
+
+  async populateAlbumsForArtist(artistName) {
+    const artist = this.searchArtistByName(artistName);
+    const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
+    .then(albums => 
+      albums.map(album => new Album(album.name, album.release_date))
+    );
+    albums.forEach(album => this.addAlbum(artist.id, album));
+    this.save();
   }
 
   searchByName(name) {
