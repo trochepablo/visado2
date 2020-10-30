@@ -24,6 +24,10 @@ class Playlist {
     this.name = name;
   }
 
+  getDuration() {
+    return this.duration;
+  }
+
   setDuration(duration) {
     this.duration = duration;
   }

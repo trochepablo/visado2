@@ -128,7 +128,7 @@ class UNQfy {
   }
 
   getArtistById(id) {
-    const artist = this.artists.filter(a => a.id === parseInt(id.id))[0];
+    const artist = this.artists.filter(a => a.id === parseInt(id))[0];
     return artist;
   }
 
@@ -155,6 +155,18 @@ class UNQfy {
   getPlaylistById(id) {
     const playlist = this.playlists.filter(p => p.id === id);
     return playlist;
+  }
+
+  searchPlaylist(name, durationLT ,durationGT) {
+    return this.playlists.filter(p => p.getName().toUpperCase().includes(name) && p.getDuration() < durationLT && p.getDuration() > durationGT);
+  }
+  
+
+  removePlaylist(id) {
+    const index = this.playlists.findIndex(p => p.id === id);
+    if (index !== -1) {
+      this.artists.splice(index, 1);
+    }
   }
 
   removeArtist(id) {
@@ -192,6 +204,16 @@ class UNQfy {
     const index = tracks.findIndex(t => t.id === id);
     tracks.splice(index, 1);
   }
+  
+  updateArtist(id, artist) {
+    const artistUpdate = this.artists.filter(a => a.id === id)[0];
+    artistUpdate.setName(artist.name);
+    artistUpdate.setCountry(artist.country);
+    const index = this.artists.findIndex(a => a.id === id);
+    this.artists.splice(index, 1,artistUpdate);
+    return artistUpdate;
+  }
+
 
   removeTrack(id) {
     const artist = this.getArtistAlbumTrack(id);
