@@ -19,6 +19,13 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "OAuthSpotify",
+            "program": "${workspaceFolder}/src/oAuthService/spotifyAuth.js",
+            "cwd": "${workspaceFolder}/src/oAuthService"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Mocha All",
             "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
             "args": [

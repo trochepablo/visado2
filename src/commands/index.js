@@ -24,6 +24,7 @@ const GetAlbumByIdCommand = require('./album/GetAlbumByIdCommand');
 const ListAlbumsCommand = require('./album/ListAlbumsCommand');
 const RemoveAlbumCommand = require('./album/RemoveAlbumCommand');
 const PrintAlbumsCommand = require('./album/PrintAlbumsCommand');
+const PopulateAlbumsForArtist = require('./album/PopulateAlbumsForArtistCommand');
 
 const AddUserCommand = require('./user/AddUserCommad');
 const UserListensToATrackCommand = require('./user/UserListensToATrackCommand');
@@ -65,6 +66,7 @@ commands.set('USERLISTENSTOATRACK', UserListensToATrackCommand);
 commands.set('TRACKSLISTENEDTOBYUSER', TracksheardUserCommand);
 commands.set('USERHOWMANYTRACKSHAVEYOUHEARD', NumberOfTracksHeardUserCommand);
 commands.set('TRESMOSTLISTENEDTRACKSOFTHEMOMENT', TresMostListenedTracksOfTheMomentUserCommand);
+commands.set('POPULATEALBUMSFORARTIST', PopulateAlbumsForArtist);
 
 
 module.exports = commands;

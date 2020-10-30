@@ -9,7 +9,8 @@ const Album = require('./src/entity/Album');
 const Track = require('./src/entity/Track');
 const User = require('./src/entity/User');
 const SAVE_FILENAME = 'data.json';
-
+const spoCliente = require('./src/apiRest/SpotifyCliente');
+const spotifyClientInstance = new spoCliente.SpotifyCliente();
 class UNQfy {
 
   constructor() {
@@ -42,17 +43,22 @@ class UNQfy {
   }
 
   existArtist(artist) {
-    if (this.searchArtistByName(artist.name)) {
+    if (this.isThereArtistInModel(artist.name)) {
       throw "The artist alredy exist.";
     }
   }
 
-  searchArtistByName(name) {
+  isThereArtistInModel(name) {
     return this.artists.some(artist => artist.name === name);
   }
 
+  searchArtistByName(name) {
+    return this.artists.find(artist => artist.name == name);
+  }
+
+
   existAlbum(album) {
-    if (this.searchArtistByName(album.name)) {
+    if (this.isThereArtistInModel(album.name)) {
       throw "The album alredy exist.";
     }
   }
@@ -357,7 +363,7 @@ class UNQfy {
   }
 
   existUser(id) {
-    if (this.searchArtistByName(id)) {
+    if (this.isThereArtistInModel(id)) {
       throw "The User alredy exist.";
     }
   }
@@ -404,7 +410,15 @@ class UNQfy {
 
   }
 
-
+  async populateAlbumsForArtist(artistName) {
+    const artist = this.searchArtistByName(artistName);
+    const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
+    .then(albums => 
+      albums.map(album => new Album(album.name, album.release_date))
+    );
+    albums.forEach(album => this.addAlbum(artist.id, album));
+    this.save();
+  }
 
   searchByName(name) {
     const artists = this.artists.filter(artist => artist.name.includes(name));
