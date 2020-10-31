@@ -11,6 +11,9 @@ const User = require('./src/entity/User');
 const SAVE_FILENAME = 'data.json';
 const spoCliente = require('./src/apiRest/SpotifyCliente');
 const spotifyClientInstance = new spoCliente.SpotifyCliente();
+const clienteMusixMatch = require('./src/clientApi/ClientMusixMatch');
+const clienteMusixMatchIstance = new clienteMusixMatch();
+
 class UNQfy {
 
   constructor() {
@@ -442,9 +445,13 @@ class UNQfy {
     return { artists, albums, tracks, playlists };
   }
 
-  getLyrics() {
-    
+  getLyrics(trackID) {
+   // const track = self.getTrackById(trackID)
+    //track.getLyrics()
+    console.log(clienteMusixMatchIstance.getLyrics("The Unforgiven"));
+    return clienteMusixMatchIstance.getLyrics("The Unforgiven");
   }
+
   save() {
     const serializedData = picklify.picklify(this);
     fs.writeFileSync(SAVE_FILENAME, JSON.stringify(serializedData, null, 2));

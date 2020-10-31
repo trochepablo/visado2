@@ -7,6 +7,7 @@ const RemoveTrackCommand = require('./track/RemoveTrackCommand');
 const PrintTracksCommand = require('./track/PrintTracksCommand');
 const PrintTracksForArtistCommand = require('./track/PrintTracksForArtistCommand');
 const PrintTracksForGenreCommand = require('./track/PrintTracksForGenreCommand');
+const GetLyricsCommand = require('./track/GetLyrics');
 
 const CreatePlaylistCommand = require('./playlist/CreatePlaylistCommand');
 const GetPlaylistByIdCommand = require('./playlist/GetPlaylistByIdCommand');
@@ -42,6 +43,8 @@ commands.set('REMOVETRACK', RemoveTrackCommand);
 commands.set('PRINTTRACKSFOR', PrintTracksCommand);
 commands.set('PRINTTRACKSFORARTIST', PrintTracksForArtistCommand);
 commands.set('PRINTTRACKSFORGENRE', PrintTracksForGenreCommand);
+commands.set('GETLYRICS', GetLyricsCommand);
+
 
 // playlist commands
 commands.set('CREATEPLAYLIST', CreatePlaylistCommand);
