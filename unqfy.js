@@ -9,7 +9,7 @@ const Album = require('./src/entity/Album');
 const Track = require('./src/entity/Track');
 const User = require('./src/entity/User');
 const SAVE_FILENAME = 'data.json';
-const spoCliente = require('./src/apiRest/SpotifyCliente');
+const spoCliente = require('./src/clientApi/SpotifyCliente');
 const spotifyClientInstance = new spoCliente.SpotifyCliente();
 const clienteMusixMatch = require('./src/clientApi/ClientMusixMatch');
 const clienteMusixMatchIstance = new clienteMusixMatch();
@@ -68,7 +68,8 @@ class UNQfy {
   }
 
   searchAlbumByName(name) {
-    return this.artists.flatMap(artist => artist.albums.some(album => album.name === name));
+    //return this.artists.flatMap(artist => artist.albums.some(album => album.name === name));
+    return this.artists.flatMap(ar => ar.albums.filter(al => al.name.indexOf(name) > -1));
   }
 
 

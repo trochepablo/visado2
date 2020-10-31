@@ -3,6 +3,7 @@ const fs = require('fs'); // para cargar/guarfar unqfy
 const path = require('path');
 const pathCreds = './src/oAuthService';
 const rp = require('request-promise');
+const BASE_URL = 'https://api.spotify.com/v1/';
 
 class SpotifyCliente {
     constructor() {
@@ -26,12 +27,12 @@ class SpotifyCliente {
     }
 
     async searchArtistByName(artistName) {
-        this.options.url = `https://api.spotify.com/v1/search?query=${artistName}&type=artist&offset=0&limit=1`;
+        this.options.url = BASE_URL + `search?query=${artistName}&type=artist&offset=0&limit=1`;
         return rp.get(this.options).then(response => response.artists.items.shift());
     }
 
     async getAlbumsByArtistId(artistId) {
-        this.options.url = `https://api.spotify.com/v1/artists/${artistId}/albums`;
+        this.options.url = BASE_URL + `artists/${artistId}/albums`;
         return rp.get(this.options).then(response => response.items);
     }
 }
