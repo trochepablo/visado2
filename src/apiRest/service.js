@@ -1,5 +1,9 @@
 const unq = require('../../unqfy');
 const express = require('express');
+const badRequest = require('./errors/BadRequestError');
+const duplicateArtist = require('./errors/DuplicateArtistError');
+const nonExistentArtist = require('./errors/NonExistentArtistError');
+const nonExistentPlaylist = require('./errors/NonExistentPlaylistError');
 const rootApp = express();
 const artists = express();
 const albums = express();
@@ -10,8 +14,54 @@ const bodyParse = require('body-parser');
 const port = process.env.PORT || 8083;
 const unqfy = new unq.UNQfy();
 
+
+function valid(data, expectedKeys) {
+    return Object.keys(expectedKeys).every(key =>
+        typeof (data[key] === expectedKeys[key])
+    );
+
+}
+
+function checkValidInput(data, expectedKeys) {
+    if (!valid(data, expectedKeys)) {
+        throw new badRequest(err, res).exception();
+    }
+}
+
+function invalidJsonHandler(err, req, res, next) {
+    if (err) {
+        throw new badRequest(err, res).exception();
+    }
+}
+
+function errorHandler(error, req, res, next) {
+
+    if (error instanceof Error) {
+
+        //res.status(error.status);
+        //res.json({ status: error.status, errorCode: error.errorCode });
+        throw error
+    } else {
+        console.log("ELSE");
+        res.status(500);
+        res.json({ status: 500, errrorCode: 'INTERNAL_SERVER_ERROR' })
+    }
+    console.log("Termino");
+    //next(error);
+
+}
+
 artists.post('/artists', (req, res) => {
-    const artist = req.unqfy.addArtist(req.body);
+
+    checkValidInput(req.body, { name: 'string', country: 'string' })
+
+    let artist = null;
+    try {
+        artist = req.unqfy.addArtist(req.body);
+    } catch (error) {
+        throw new duplicateArtist(error, res).exception();
+    }
+
     req.unqfy.save();
     res.status(201).json(artist);
 });
@@ -19,13 +69,29 @@ artists.post('/artists', (req, res) => {
 
 artists.get('/artists/:artistId', (req, res) => {
     const artistId = parseInt(req.params.artistId);
-    res.status(200).json(req.unqfy.getArtistById(artistId));
+
+    const artist = req.unqfy.getArtistById(artistId);
+
+    if (!artist) {
+        throw new nonExistentArtist(res).exception();
+    }
+
+    res.status(200).json(artist);
 });
 
 
 artists.put('/artists/:artistId', (req, res) => {
     const artistId = parseInt(req.params.artistId);
-    const artist = req.unqfy.updateArtist(artistId, req.body);
+
+    checkValidInput(req.body, { name: 'string', country: 'string' })
+
+    let artist = null;
+    try {
+        artist = req.unqfy.updateArtist(req.body);
+    } catch (error) {
+        throw new nonExistentArtist(error, res).exception();
+    }
+
     req.unqfy.save();
     res.status(200).json(artist);
 });
@@ -33,14 +99,20 @@ artists.put('/artists/:artistId', (req, res) => {
 
 artists.delete('/artists/:artistId', (req, res) => {
     const artistId = parseInt(req.params.artistId);
+
+    const artist = req.unqfy.getArtistById(artistId);
+
+    if (!artist) {
+        throw new nonExistentArtist(res).exception();
+    }
+
     req.unqfy.removeArtist(artistId);
     req.unqfy.save();
-    res.status(204).json({ message: `delete artist:${artistId}` });
+    res.status(204).json({ message: `delete artist:${artist.getId()}` });
 });
 
-//Consultar
 artists.get('/artists', (req, res) => {
-    const name = req.query.name;
+    const name = req.query.name || '';
     res.status(200).json(req.unqfy.getArtistsByName(name));
 });
 
@@ -89,37 +161,71 @@ tracks.get('/tracks/:trackId/lyrics', (req, res) => {
 });
 
 playlists.post('/playlists', (req, res) => {
-    const track = req.unqfy.addTrack(req.body);
+    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', genres: 'array' });
+
+    let track = null;
+    track = req.unqfy.getTrackById(this.trackExists(req.body));
+    const newPlaylist = req.unqfy.createPlaylistForIdTracks(req.body);
+
+    try {
+        req.unqfy.addPlaylist(newPlaylist);
+    } catch (error) {
+        throw new nonExistentPlaylist(error, res).exception();
+    }
+
     req.unqfy.save();
-    res.status(200).json(track);
+    res.status(200).json(newPlaylist);
 });
 
 playlists.post('/playlists/:artistId', (req, res) => {
-    const track = req.unqfy.addTrack(req.body);
+    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', tracks: 'array' });
+
+    let track = null;
+    track = req.unqfy.getTrackById(this.trackExists(req.body));
+    const newPlaylist = req.unqfy.createPlaylistForIdTracks(req.body);
+
+    try {
+        req.unqfy.addPlaylist(newPlaylist);
+    } catch (error) {
+        throw new nonExistentPlaylist(error, res).exception();
+    }
+
     req.unqfy.save();
-    res.status(200).json(track);
+    res.status(200).json(newPlaylist);
 });
 
 playlists.get('/playlists/:playlistId', (req, res) => {
-    const playlistId = parseInt(req.params.artistId);
-    res.status(200).json(req.unqfy.getPlaylistById(playlistId));
+    const playlistId = parseInt(req.params.playlistId);
+
+    const playlist = req.unqfy.getPlaylistById(playlistId);
+    console.log(playlistId);
+    console.log(playlist);
+    if (!playlist) {
+        throw new nonExistentPlaylist(res).exception();
+    }
+
+    res.status(200).json(playlist);
 });
 
 
 playlists.delete('/playlists/:playlistId', (req, res) => {
-    const playlistId = parseInt(req.params.artistId);
-    req.unqfy.removePlaylist(playlistId);
+    const playlistId = parseInt(req.params.playlistId);
+
+    const playlist = req.unqfy.getPlaylistById(playlistId);
+
+    try {
+        req.unqfy.removePlaylist(playlistId);
+    } catch (error) {
+        throw new nonExistentPlaylist(error, res).exception();
+    }
     req.unqfy.save();
-    res.status(204).json({ message: `delete artist:${playlistId}` });
+    res.status(204).json({ message: `delete playlist:${playlistId}` });
 });
 
 playlists.get('/playlists', (req, res) => {
-    const name = req.query.name;
+    const name = req.query.name || '';
     const durationLT = parseInt(req.query.durationGT);
     const durationGT = parseInt(req.query.durationGT);
-    console.log(name);
-    console.log(durationLT);
-    console.log(durationGT);
     const params = { name: name, durationGT: durationGT, durationLT: durationLT };
     res.status(200).json(req.unqfy.searchPlaylist(name, durationLT, durationGT));
 });
@@ -131,11 +237,13 @@ rootApp.use((req, res, next) => {
 
 rootApp.use(bodyParse.urlencoded({ extended: true }));
 rootApp.use(bodyParse.json());
+rootApp.use(invalidJsonHandler);
 rootApp.use('/api', artists, albums, tracks, playlists, users);
 
-// rootApp.use((req,res) => {
-//     res.status(404);
-//     res.json({status: 404, errorCode: 'RESOURCE_NOT_FOUND'});
-// });
+rootApp.use((req, res) => {
+    res.status(404);
+    res.json({ status: 404, errorCode: 'RESOURCE_NOT_FOUND' });
+});
+rootApp.use(errorHandler);
 
 rootApp.listen(port, () => console.log('Listening on ' + port));

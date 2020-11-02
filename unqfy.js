@@ -166,7 +166,7 @@ class UNQfy {
   }
 
   getPlaylistById(id) {
-    const playlist = this.playlists.filter(p => p.id === id);
+    const playlist = this.playlists.filter(p => p.id === id)[0];
     return playlist;
   }
 
@@ -316,6 +316,32 @@ class UNQfy {
     }
   }
 
+  isTrack(track,idTracks){
+    return idTracks.some(id => id === track.id);
+  }
+
+  getTracksForId(idTracks) {
+    const albumes = this.artists.flatMap(artist => artist.albums);
+    const tracks = albumes.flatMap(album => album.tracks);
+    const ts = tracks.filter(t => this.isTrack(t,idTracks));
+    return ts;
+  }
+
+  createPlaylistForIdTracks(name, idTracks, maxDuration) {
+    try {
+      const idPlaylist = this.idIncrementPlaylist.idAutoIncrement();
+      const newPlaylist = new Playlist(idPlaylist, name, genresToInclude);
+      const tracks = this.getTracksForId(idTracks);
+      newPlaylist.generateListByTracks(tracks, maxDuration);
+      this.addPlaylist(newPlaylist);
+      return newPlaylist;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  
   addPlaylist(newPlaylist) {
     this.playlists.push(newPlaylist);
   }
@@ -460,8 +486,8 @@ class UNQfy {
   getLyrics(trackID) {
    // const track = self.getTrackById(trackID)
     //track.getLyrics()
-    console.log(clienteMusixMatchIstance.getLyrics("The Unforgiven"));
-    return clienteMusixMatchIstance.getLyrics("The Unforgiven");
+    console.log(clienteMusixMatchIstance.getLyrics(trackID));
+    return clienteMusixMatchIstance.getLyrics(trackID);
   }
 
   save() {
