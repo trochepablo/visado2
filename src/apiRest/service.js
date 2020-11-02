@@ -16,21 +16,22 @@ const unqfy = new unq.UNQfy();
 
 
 function valid(data, expectedKeys) {
-    return Object.keys(expectedKeys).every(key =>
-        typeof (data[key] === expectedKeys[key])
-    );
+    return Object.keys(expectedKeys).every(key =>{
+        typeof (data[key] === expectedKeys[key]);
+        console.log(data[key],expectedKeys[key])
+    });
 
 }
 
-function checkValidInput(data, expectedKeys) {
+function checkValidInput(data, expectedKeys,res) {
     if (!valid(data, expectedKeys)) {
-        throw new badRequest(err, res).exception();
+        throw new badRequest(res).exception();
     }
 }
 
 function invalidJsonHandler(err, req, res, next) {
     if (err) {
-        throw new badRequest(err, res).exception();
+        throw new badRequest(res).exception();
     }
 }
 
@@ -47,13 +48,12 @@ function errorHandler(error, req, res, next) {
         res.json({ status: 500, errrorCode: 'INTERNAL_SERVER_ERROR' })
     }
     console.log("Termino");
-    //next(error);
 
 }
 
 artists.post('/artists', (req, res) => {
 
-    checkValidInput(req.body, { name: 'string', country: 'string' })
+    checkValidInput(req.body, { name: 'string', country: 'string' },res)
 
     let artist = null;
     try {
@@ -83,7 +83,7 @@ artists.get('/artists/:artistId', (req, res) => {
 artists.put('/artists/:artistId', (req, res) => {
     const artistId = parseInt(req.params.artistId);
 
-    checkValidInput(req.body, { name: 'string', country: 'string' })
+    checkValidInput(req.body, { name: 'string', country: 'string' },res)
 
     let artist = null;
     try {
@@ -161,7 +161,7 @@ tracks.get('/tracks/:trackId/lyrics', (req, res) => {
 });
 
 playlists.post('/playlists', (req, res) => {
-    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', genres: 'array' });
+    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', genres: 'array' },res);
 
     let track = null;
     track = req.unqfy.getTrackById(this.trackExists(req.body));
@@ -178,7 +178,7 @@ playlists.post('/playlists', (req, res) => {
 });
 
 playlists.post('/playlists/:artistId', (req, res) => {
-    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', tracks: 'array' });
+    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', tracks: 'array' },res);
 
     let track = null;
     track = req.unqfy.getTrackById(this.trackExists(req.body));

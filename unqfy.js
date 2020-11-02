@@ -339,8 +339,6 @@ class UNQfy {
       throw error;
     }
   }
-
-
   
   addPlaylist(newPlaylist) {
     this.playlists.push(newPlaylist);
@@ -465,6 +463,20 @@ class UNQfy {
 
   }
 
+  dataTrack(dataTrack) {
+    console.log(dataTrack);
+    return {
+        name: dataTrack, 
+        album: dataTrack, 
+        duration: dataTrack, 
+        genres: dataTrack
+    };
+  }
+
+  addTracksAlbums(albumId) {
+    clienteMusixMatchIstance.getTracksForArtist(albumId).forEach(t => this.addTrack(albumId,this.dataTrack(t)));
+  }
+
   async populateAlbumsForArtist(artistName) {
     const artist = this.searchArtistByName(artistName);
     const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
@@ -472,6 +484,7 @@ class UNQfy {
       albums.map(album => new Album(album.name, album.release_date))
     );
     albums.forEach(album => this.addAlbum(artist.id, album));
+    this.addTracksAlbums(albumId);
     this.save();
   }
 

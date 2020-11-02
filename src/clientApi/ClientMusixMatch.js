@@ -61,6 +61,30 @@ class ClientMusixMatch {
                 console.log('algo salio mal', error);
             });
     }
+   
+    getTracksForArtist(id) {
+
+        this.options.uri = `https://api.musixmatch.com/ws/1.1/album.tracks.get?album_id=${id}`;
+
+        rp.get(
+            this.options
+        ).then((response) => {
+            const header = response.message.header;
+
+            if (header.status_code !== 200) {
+                throw new Error('status code != 200');
+            }
+
+            const tracks = response.message.body.track_list;
+
+            return tracks;
+
+        })
+            .catch((error) => {
+                console.log('algo salio mal', error);
+            });
+    } 
+
 }
 
 module.exports = ClientMusixMatch;
