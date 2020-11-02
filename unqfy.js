@@ -69,7 +69,11 @@ class UNQfy {
 
   searchAlbumByName(name) {
     //return this.artists.flatMap(artist => artist.albums.some(album => album.name === name));
-    return this.artists.flatMap(ar => ar.albums.filter(al => al.name.indexOf(name) > -1));
+    if(name){
+      return this.artists.flatMap(ar => ar.albums.filter(al => al.name.toUpperCase().indexOf(name.toUpperCase()) > -1));
+    } else {
+      return this.artists.flatMap(ar => ar.albums);
+    }
   }
 
 
