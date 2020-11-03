@@ -1,4 +1,5 @@
-//const clienteMusixMatch = require('../clientApi/ClientMusixMatch');
+const clienteMusixMatch = require('../clientApi/ClientMusixMatch');
+const musixMatch = new clienteMusixMatch();
 
 class Track {
 
@@ -81,9 +82,10 @@ class Track {
     this.numberOfTimesListened = this.numberOfTimesListened + 1;
   }
 
-  //getLyrics() {
-    //return clienteMusixMatch.getLyrics(clienteMusixMatch.getIdTrack(this.name))
-  //}
+  getLyrics() {
+    console.log(musixMatch.lyrics(15953433));
+    return musixMatch.getLyrics(this.name);
+  }
 }
 
 module.exports = Track;

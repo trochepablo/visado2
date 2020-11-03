@@ -11,8 +11,7 @@ const User = require('./src/entity/User');
 const SAVE_FILENAME = 'data.json';
 const spoCliente = require('./src/clientApi/SpotifyCliente');
 const spotifyClientInstance = new spoCliente.SpotifyCliente();
-const clienteMusixMatch = require('./src/clientApi/ClientMusixMatch');
-const clienteMusixMatchIstance = new clienteMusixMatch();
+
 
 
 class UNQfy {
@@ -56,6 +55,10 @@ class UNQfy {
     return this.artists.some(artist => artist.name === name);
   }
 
+  isThereAlbumInModel(name) {
+    return this.searchAlbumByName(name).length > 0;
+  }
+
   searchArtistByName(name) {
     return this.artists.find(artist => artist.name == name);
   }
@@ -76,6 +79,13 @@ class UNQfy {
     }
   }
 
+  filterAlbumsByName(name) {
+    const albumes = this.artists.flatMap(ar => ar.albums);
+    const regex = new RegExp(name, 'i');
+    const albumesFilter = albumes.filter(a => a.name.match(regex, 'i'));
+    return albumesFilter ? albumesFilter : new Array;
+  }
+
 
   // albumData: objeto JS con los datos necesarios para crear un album
   //   albumData.name (string)
@@ -91,9 +101,21 @@ class UNQfy {
     this.idIncrementAlbum.idAutoIncrement();
     const artistRecovered = this.artists.filter(a => a.id === parseInt(artistId))[0];
     const album = new Album(albumData.name, albumData.year);
+    if (!artistRecovered) {
+      return;
+    }
     album.setId(this.idIncrementAlbum.id);
     artistRecovered.setAlbum(album);
     return album;
+  }
+
+  updateAlbum(artistId, albumToUpdate) {
+    this.removeAlbum(albumToUpdate.id);
+    const artistRecovered = this.artists.filter(a => a.id === parseInt(artistId))[0];
+    if (!artistRecovered) {
+      return;
+    }
+    artistRecovered.setAlbum(albumToUpdate);
   }
 
   isAlbumArtist(id, albums) {
@@ -102,7 +124,6 @@ class UNQfy {
 
   getArtistToAlbum(id) {
     const artist = this.artists.filter(a => this.isAlbumArtist(id, a.albums))[0];
-    //console.log(artist);
     return artist;
   }
 
@@ -149,6 +170,16 @@ class UNQfy {
     return artist;
   }
 
+  getArtistsByName(name) {
+    if(name) {
+      const regex = new RegExp(name, 'i');
+      const artist = this.artists.filter(a => a.name.match(regex, 'i'));
+      return artist ? artist : new Array;
+    } else {
+      return this.artists.map(ar => Object.assign(ar));
+    }
+  }
+
   getAlbumById(id) {
     const album = this.getArtistAlbum(id);
     return album;
@@ -170,19 +201,15 @@ class UNQfy {
   }
 
   getPlaylistById(id) {
-    const playlist = this.playlists.filter(p => p.id === id);
+    const playlist = this.playlists.filter(p => p.id === id)[0];
+    console.log(playlist);
     return playlist;
   }
-
-  searchPlaylist(name, durationLT ,durationGT) {
-    return this.playlists.filter(p => p.getName().toUpperCase().includes(name) && p.getDuration() < durationLT && p.getDuration() > durationGT);
-  }
-  
 
   removePlaylist(id) {
     const index = this.playlists.findIndex(p => p.id === id);
     if (index !== -1) {
-      this.artists.splice(index, 1);
+      this.playlists.splice(index, 1);
     }
   }
 
@@ -201,17 +228,15 @@ class UNQfy {
   }
 
   getArtistAlbumTrack(id) {
-    const artist = this.artists.filter(a => this.isAlbumTrack(id, a.albums))[0];
-    return artist;
+    const albums = this.artists.filter(a => this.isAlbumTrack(id, a.albums))[0];
+    console.log(albums)
+    return albums;
   }
 
   isAlbumTrack(id, albums) {
-    return albums.some(a => this.isTrack(id, a.tracks));
+    return albums.some(a =>{ this.isTrack(id, a.tracks); console.log(a.tracks,id)});
   }
 
-  isTrack(id, tracks) {
-    return tracks.some(a => a.id === id);
-  }
 
   updateAlbums(id, albums) {
     albums.forEach(a => this.updateTracks(id, a.tracks));
@@ -234,6 +259,7 @@ class UNQfy {
 
   removeTrack(id) {
     const artist = this.getArtistAlbumTrack(id);
+    console.log(artist)
     this.updateAlbums(id, artist.albums);
   }
 
@@ -283,10 +309,12 @@ class UNQfy {
 
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
-  getTracksMatchingGenres(genres) {
+  getTracksMatchingGenres(genresTrack) {
+    console.log(genresTrack)
     const albumes = this.artists.flatMap(artist => artist.albums);
     const tracks = albumes.flatMap(album => album.tracks);
-    const trackInGenres = tracks.filter(t => t.genres.some(g => genres.includes(g)));
+    const trackInGenres = tracks.filter(t => t.genres.some(g => genresTrack.includes(g)));
+    console.log(trackInGenres)
     return trackInGenres;
   }
 
@@ -308,10 +336,13 @@ class UNQfy {
         * un metodo duration() que retorne la duración de la playlist.
         * un metodo hasTrack(aTrack) que retorna true si aTrack se encuentra en la playlist.
     */
+   //console.log(name, genresToInclude, maxDuration);
     try {
       const idPlaylist = this.idIncrementPlaylist.idAutoIncrement();
       const newPlaylist = new Playlist(idPlaylist, name, genresToInclude);
+      ///console.log(newPlaylist);
       const tracksInGenres = this.getTracksMatchingGenres(genresToInclude);
+      console.log(newPlaylist);
       newPlaylist.generateListByTracks(tracksInGenres, maxDuration);
       this.addPlaylist(newPlaylist);
       return newPlaylist;
@@ -319,7 +350,30 @@ class UNQfy {
       throw error;
     }
   }
+  
+  isTrack(id, tracks) {
+    console.log(id,tracks)
+    return tracks.some(t => t.id === id);
+  }
 
+  getTracksForId(idTracks) {
+    const albumes = this.artists.flatMap(artist => artist.albums);
+    const tracks = albumes.flatMap(album => album.tracks);
+    const ts = tracks.filter(t => this.isTrack(t,idTracks));
+    return ts;
+  }
+
+  createPlaylistForIdTracks(data) {
+    
+      const idPlaylist = this.idIncrementPlaylist.idAutoIncrement();
+      const newPlaylist = new Playlist(idPlaylist, data.name, []);
+      const tracks = this.getTracksForId(data.tracks);
+      newPlaylist.setTracks(tracks);
+      this.addPlaylist(newPlaylist);
+      return newPlaylist;
+    
+  }
+  
   addPlaylist(newPlaylist) {
     this.playlists.push(newPlaylist);
   }
@@ -443,6 +497,7 @@ class UNQfy {
 
   }
 
+
   async populateAlbumsForArtist(artistName) {
     const artist = this.searchArtistByName(artistName);
     const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
@@ -461,11 +516,22 @@ class UNQfy {
     return { artists, albums, tracks, playlists };
   }
 
+  searchPlaylist(name, durationLT ,durationGT) {
+    console.log(typeof name)
+    console.log(name === this.playlists[0].name);
+    console.log(typeof this.playlists[0].name);
+    console.log(this.playlists[0]);
+    console.log(this.playlists.filter(p => p.getName().toString() === name ));
+    return this.playlists.filter(p => p.getName() === name && p.getDuration() < durationLT && p.getDuration() > durationGT);
+  }
+
   getLyrics(trackID) {
-   // const track = self.getTrackById(trackID)
-    //track.getLyrics()
-    console.log(clienteMusixMatchIstance.getLyrics("The Unforgiven"));
-    return clienteMusixMatchIstance.getLyrics("The Unforgiven");
+    const track = this.getTrackById(trackID); 
+    //console.log( track.getLyrics(track.getName()));
+    return {
+             Name: track.getName(),
+             lyrics: track.getLyrics(track.getName())
+           };
   }
 
   save() {

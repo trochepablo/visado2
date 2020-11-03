@@ -17,7 +17,7 @@ class Playlist {
   }
 
   getName() {
-    return this.id;
+    return this.name;
   }
 
   setName(name) {

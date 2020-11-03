@@ -16,21 +16,20 @@ class ClientMusixMatch {
 
 
     lyrics(id) {
-        this.options.uri =  `http://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id=${id}`;
+        this.options.uri = `http://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id=${id}`;
 
         rp.get(
             this.options
         ).then((response) => {
             console.log(id);
-            console.log(response)
-            let header = response.message.header;
-            let body = response.message.body;
-            
+            const header = response.message.header;
+            const body = response.message.body;
+
             if (header.status_code !== 200) {
                 throw new Error('status code != 200');
             }
-            
-            let lyrics = body.lyrics.lyrics_body;
+
+            const lyrics = body.lyrics.lyrics_body;
             console.log(lyrics);
             return lyrics;
         }).catch((error) => {
@@ -45,20 +44,25 @@ class ClientMusixMatch {
         rp.get(
             this.options
         ).then((response) => {
-            let header = response.message.header;
-            let tracks = response.message.body.track_list;
+            console.log(title);
+            const header = response.message.header;
+            const tracks = response.message.body.track_list;
 
             if (header.status_code !== 200) {
                 throw new Error('status code != 200');
             }
-        
-            let id = tracks[0].track.track_id;
+
+            const id = tracks[0].track.track_id;
 
             return this.lyrics(id);
-        }).catch((error) => {
-            console.log('algo salio mal', error);
+
+        })
+        .catch((error) => {
+          console.log('algo salio mal', error);
         });
     }
+
+
 }
 
 module.exports = ClientMusixMatch;
