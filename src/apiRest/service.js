@@ -2,8 +2,11 @@ const unq = require('../../unqfy');
 const express = require('express');
 const badRequest = require('./errors/BadRequestError');
 const duplicateArtist = require('./errors/DuplicateArtistError');
-const nonExistentArtist = require('./errors/NonExistentArtistError');
+const nonExistentArtist = require('./errors/NonExistentArtistError'); 
+const duplicateAlbumError = require('./errors/DuplicateAlbumError');
 const nonExistentPlaylist = require('./errors/NonExistentPlaylistError');
+const nonExistentArtistForAddAlbumError = require('./errors/NonExistentArtistForAddAlbumError');
+const nonExistentAlbumError = require('./errors/NonExistentAlbumError');
 const rootApp = express();
 const artists = express();
 const albums = express();
@@ -17,8 +20,7 @@ const unqfy = new unq.UNQfy();
 
 function valid(data, expectedKeys) {
     return Object.keys(expectedKeys).every(key =>{
-        typeof (data[key] === expectedKeys[key]);
-        console.log(data[key],expectedKeys[key])
+        return (typeof data[key]) === expectedKeys[key];
     });
 
 }
@@ -53,7 +55,7 @@ function errorHandler(error, req, res, next) {
 
 artists.post('/artists', (req, res) => {
 
-    checkValidInput(req.body, { name: 'string', country: 'string' },res)
+    checkValidInput(req.body, { name: 'string', country: 'string' }, res);
 
     let artist = null;
     try {
@@ -87,7 +89,7 @@ artists.put('/artists/:artistId', (req, res) => {
 
     let artist = null;
     try {
-        artist = req.unqfy.updateArtist(req.body);
+        artist = req.unqfy.updateArtist(artistId, req.body);
     } catch (error) {
         throw new nonExistentArtist(error, res).exception();
     }
@@ -117,40 +119,62 @@ artists.get('/artists', (req, res) => {
 });
 
 albums.post('/albums', (req, res) => {
+
+    checkValidInput(req.body, { artistId: 'number', name: 'string', year: 'number'},res);
+
     const params = req.body;
     const albumParam = { name: params.name, year: params.year };
-    const newAlbum = req.unqfy.addAlbum(params.artistId, albumParam);
-    req.unqfy.save();
-    res.status(201).json(newAlbum);
+    const existArtist = req.unqfy.getArtistById(params.artistId);
+    const existAlbum = req.unqfy.isThereAlbumInModel(params.name);
+
+    if (!existArtist) {
+        throw new nonExistentArtistForAddAlbumError(res).exception();
+    }
+    if (existAlbum) {
+        throw new duplicateAlbumError(res).exception();
+    }
+    else {
+        const newAlbum = req.unqfy.addAlbum(params.artistId, albumParam);
+        req.unqfy.save();
+        res.status(201).json(newAlbum);
+    }
 });
 
 albums.get('/albums/:albumId', (req, res) => {
     const albumId = parseInt(req.params.albumId);
     const album = req.unqfy.getAlbumById(albumId);
+    if(!album) {
+        throw new nonExistentAlbumError(res).exception();
+    }
     res.status(200).json(album);
 });
 
-albums.put('/albums/:albumId', (req, res) => {
+albums.patch('/albums/:albumId', (req, res) => {
     const albumId = parseInt(req.params.albumId);
     const album = req.unqfy.getAlbumById(albumId);
     album.year = req.body.year;
-    req.unqfy.removeAlbum(albumId);
     const artist = req.unqfy.getArtistToAlbum(album.id);
-    req.unqfy.addAlbum(artist.id, album);
+    req.unqfy.updateAlbum(artist.id, album);
     req.unqfy.save();
     res.status(200).json(album);
 });
 
 albums.delete('/albums/:albumId', (req, res) => {
     const albumId = parseInt(req.params.albumId);
+    const album = req.unqfy.getAlbumById(albumId);
+
+    if (!album) {
+        throw new nonExistentAlbumError(res).exception();
+    }
+
     req.unqfy.removeAlbum(albumId);
     req.unqfy.save();
     res.status(204).json({ message: `delete artist:${albumId}` });
 });
 
 albums.get('/albums', (req, res) => {
-    const nameQueryParam = req.query.name;
-    const albums = req.unqfy.searchAlbumByName(nameQueryParam);
+    const nameQueryParam = req.query.name || '';
+    const albums = req.unqfy.filterAlbumsByName(nameQueryParam);
     res.status(200).json(albums);
 });
 
@@ -161,7 +185,7 @@ tracks.get('/tracks/:trackId/lyrics', (req, res) => {
 });
 
 playlists.post('/playlists', (req, res) => {
-    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', genres: 'array' },res);
+    checkValidInput(req.body, { id: 'number', name: 'string', duration: 'number', genres: 'array' },res);
 
     let track = null;
     track = req.unqfy.getTrackById(this.trackExists(req.body));
@@ -178,7 +202,7 @@ playlists.post('/playlists', (req, res) => {
 });
 
 playlists.post('/playlists/:artistId', (req, res) => {
-    checkValidInput(req.body, { id: 'int', name: 'string', duration: 'int', tracks: 'array' },res);
+    checkValidInput(req.body, { id: 'number', name: 'string', duration: 'number', tracks: 'array' },res);
 
     let track = null;
     track = req.unqfy.getTrackById(this.trackExists(req.body));

@@ -56,6 +56,10 @@ class UNQfy {
     return this.artists.some(artist => artist.name === name);
   }
 
+  isThereAlbumInModel(name) {
+    return this.searchAlbumByName(name).length > 0;
+  }
+
   searchArtistByName(name) {
     return this.artists.find(artist => artist.name == name);
   }
@@ -70,6 +74,13 @@ class UNQfy {
   searchAlbumByName(name) {
     //return this.artists.flatMap(artist => artist.albums.some(album => album.name === name));
     return this.artists.flatMap(ar => ar.albums.filter(al => al.name.indexOf(name) > -1));
+  }
+
+  filterAlbumsByName(name) {
+    const albumes = this.artists.flatMap(ar => ar.albums);
+    const regex = new RegExp(name, 'i');
+    const albumesFilter = albumes.filter(a => a.name.match(regex, 'i'));
+    return albumesFilter ? albumesFilter : new Array;
   }
 
 
@@ -87,9 +98,21 @@ class UNQfy {
     this.idIncrementAlbum.idAutoIncrement();
     const artistRecovered = this.artists.filter(a => a.id === parseInt(artistId))[0];
     const album = new Album(albumData.name, albumData.year);
+    if (!artistRecovered) {
+      return;
+    }
     album.setId(this.idIncrementAlbum.id);
     artistRecovered.setAlbum(album);
     return album;
+  }
+
+  updateAlbum(artistId, albumToUpdate) {
+    this.removeAlbum(albumToUpdate.id);
+    const artistRecovered = this.artists.filter(a => a.id === parseInt(artistId))[0];
+    if (!artistRecovered) {
+      return;
+    }
+    artistRecovered.setAlbum(albumToUpdate);
   }
 
   isAlbumArtist(id, albums) {
@@ -143,6 +166,16 @@ class UNQfy {
   getArtistById(id) {
     const artist = this.artists.filter(a => a.id === parseInt(id))[0];
     return artist;
+  }
+
+  getArtistsByName(name) {
+    if(name) {
+      const regex = new RegExp(name, 'i');
+      const artist = this.artists.filter(a => a.name.match(regex, 'i'));
+      return artist ? artist : new Array;
+    } else {
+      return this.artists.map(ar => Object.assign(ar));
+    }
   }
 
   getAlbumById(id) {
@@ -484,7 +517,7 @@ class UNQfy {
       albums.map(album => new Album(album.name, album.release_date))
     );
     albums.forEach(album => this.addAlbum(artist.id, album));
-    this.addTracksAlbums(albumId);
+    //this.addTracksAlbums(albumId);
     this.save();
   }
 
