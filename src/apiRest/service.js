@@ -246,9 +246,7 @@ playlists.get('/playlists', (req, res) => {
     const name = req.query.name || '';
     const durationLT = parseInt(req.query.durationLT);
     const durationGT = parseInt(req.query.durationGT);
-    console.log(req.unqfy.searchPlaylist(name, durationLT, durationGT));
-    
-    res.status(200).json({});
+    res.status(200).json(req.unqfy.searchPlaylist(name, durationLT, durationGT));
 });
 
 rootApp.use((req, res, next) => {

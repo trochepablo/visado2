@@ -60,7 +60,8 @@ class UNQfy {
   }
 
   searchArtistByName(name) {
-    return this.artists.find(artist => artist.name == name);
+    const regex = new RegExp(name, 'i');
+    return this.artists.find(artist => artist.name.match(regex));
   }
 
 
