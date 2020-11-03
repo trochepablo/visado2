@@ -4,9 +4,11 @@ const badRequest = require('./errors/BadRequestError');
 const duplicateArtist = require('./errors/DuplicateArtistError');
 const nonExistentArtist = require('./errors/NonExistentArtistError'); 
 const duplicateAlbumError = require('./errors/DuplicateAlbumError');
-const nonExistentPlaylist = require('./errors/NonExistentPlaylistError');
+const nonExistentPlaylist = require('./errors/NonExistenPlaylistError');
+const nonExistentTrackForAddPlaylist = require('./errors/NonExistentTrackForAddPlaylistError')
 const nonExistentArtistForAddAlbumError = require('./errors/NonExistentArtistForAddAlbumError');
 const nonExistentAlbumError = require('./errors/NonExistentAlbumError');
+const theSongYouAreLookingForDoesNotExist = require('./errors/TheSongYouAreLookingForDoesNotExistError')
 const rootApp = express();
 const artists = express();
 const albums = express();
@@ -14,6 +16,7 @@ const tracks = express();
 const playlists = express();
 const users = express();
 const bodyParse = require('body-parser');
+const Playlist = require('../entity/Playlist');
 const port = process.env.PORT || 8083;
 const unqfy = new unq.UNQfy();
 
@@ -39,17 +42,15 @@ function invalidJsonHandler(err, req, res, next) {
 
 function errorHandler(error, req, res, next) {
 
-    if (error instanceof Error) {
+   // if (error instanceof Error) {
 
         //res.status(error.status);
         //res.json({ status: error.status, errorCode: error.errorCode });
-        throw error
-    } else {
-        console.log("ELSE");
+     //   throw error
+    //} else {
         res.status(500);
         res.json({ status: 500, errrorCode: 'INTERNAL_SERVER_ERROR' })
-    }
-    console.log("Termino");
+   // }
 
 }
 
@@ -179,79 +180,75 @@ albums.get('/albums', (req, res) => {
 });
 
 tracks.get('/tracks/:trackId/lyrics', (req, res) => {
-    const trackId = req.params.trackId;
-    const lyric = unqfy.searchLyrickByTrackName(trackId);
-    res.status(200).json({ Name: trackId, lyrics: lyric });
+    const trackId = parseInt(req.params.trackId);
+    console.log(req.params.trackId);
+    let lyrics = null;
+    
+    try {
+        lyrics = req.unqfy.getLyrics(trackId);
+    } catch(error) {
+       throw new theSongYouAreLookingForDoesNotExist(res).exception();   
+    }
+
+    res.status(200).json({ Name: trackId, lyrics: lyrics });
 });
 
 playlists.post('/playlists', (req, res) => {
-    checkValidInput(req.body, { id: 'number', name: 'string', duration: 'number', genres: 'array' },res);
+    //checkValidInput(req.body, { id: 'number', name: 'string', duration: 'number', genres: 'string' },res);
+    let newPlaylist = null;
 
-    let track = null;
-    track = req.unqfy.getTrackById(this.trackExists(req.body));
-    const newPlaylist = req.unqfy.createPlaylistForIdTracks(req.body);
+    if(Object.entries(req.body).length === 3) {
+       newPlaylist = req.unqfy.createPlaylist(req.body.name,req.body.genres,parseInt(req.body.maxDuration));
+    
+    } else {
+       newPlaylist = req.unqfy.createPlaylistForIdTracks(req.body);
+    }
 
     try {
         req.unqfy.addPlaylist(newPlaylist);
     } catch (error) {
-        throw new nonExistentPlaylist(error, res).exception();
+        throw new nonExistentTrackForAddPlaylist(res).exception();
     }
 
     req.unqfy.save();
     res.status(200).json(newPlaylist);
 });
 
-playlists.post('/playlists/:artistId', (req, res) => {
-    checkValidInput(req.body, { id: 'number', name: 'string', duration: 'number', tracks: 'array' },res);
 
-    let track = null;
-    track = req.unqfy.getTrackById(this.trackExists(req.body));
-    const newPlaylist = req.unqfy.createPlaylistForIdTracks(req.body);
-
-    try {
-        req.unqfy.addPlaylist(newPlaylist);
-    } catch (error) {
-        throw new nonExistentPlaylist(error, res).exception();
-    }
-
-    req.unqfy.save();
-    res.status(200).json(newPlaylist);
-});
 
 playlists.get('/playlists/:playlistId', (req, res) => {
     const playlistId = parseInt(req.params.playlistId);
-
+    console.log(playlistId)
     const playlist = req.unqfy.getPlaylistById(playlistId);
-    console.log(playlistId);
-    console.log(playlist);
+ 
     if (!playlist) {
         throw new nonExistentPlaylist(res).exception();
     }
-
-    res.status(200).json(playlist);
+  
+    res.status(200).json(JSON.parse(playlist));
 });
 
 
 playlists.delete('/playlists/:playlistId', (req, res) => {
     const playlistId = parseInt(req.params.playlistId);
 
-    const playlist = req.unqfy.getPlaylistById(playlistId);
-
     try {
         req.unqfy.removePlaylist(playlistId);
     } catch (error) {
-        throw new nonExistentPlaylist(error, res).exception();
+        throw new nonExistentPlaylist(res).exception();
     }
+
     req.unqfy.save();
     res.status(204).json({ message: `delete playlist:${playlistId}` });
 });
 
 playlists.get('/playlists', (req, res) => {
     const name = req.query.name || '';
-    const durationLT = parseInt(req.query.durationGT);
+    const durationLT = parseInt(req.query.durationLT);
     const durationGT = parseInt(req.query.durationGT);
-    const params = { name: name, durationGT: durationGT, durationLT: durationLT };
-    res.status(200).json(req.unqfy.searchPlaylist(name, durationLT, durationGT));
+    console.log(req.unqfy.searchPlaylist(name, durationLT, durationGT));
+    
+    res.status(200).json({});
 });
 
 rootApp.use((req, res, next) => {

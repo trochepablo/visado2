@@ -2,8 +2,8 @@ const Command = require('../Command');
 
 class GetLyricsCommand extends Command {
     execute(args) { 
-        const name = args[1];
-        this.unqfy.getLyrics(name);
+        const id = parseInt(args[0]);
+        this.unqfy.getLyrics(id);
     }
 }
 
