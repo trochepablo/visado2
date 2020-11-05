@@ -1,17 +1,9 @@
-class NonExistenArtistError extends Error {
-
-    constructor(res) {
-        super();
-        this.name = "Non Existen Artist Error";
-        this.res = res;
+class NonExistentArtistError extends Error {
+    constructor() {
+        super("Non Existen Artist Error");
+        this.status = 404;
+        this.errorCode = 'RESOURCE_NOT_FOUND';
     }
-
-
-    exception() { 
-        this.res.status(404);
-        this.res.json({ status: 404, errorCode: "RESOURCE_NOT_FOUND" });
-    }  
-    
 }
 
-module.exports = NonExistenArtistError;
+module.exports = NonExistentArtistError;

@@ -47,7 +47,7 @@ function main() {
     command.setUNQfy(unqFy);
     const params = process.argv.slice(3);
     command.execute(params); // ejecuto comando y envio el resto de los argumentos
-    command.unqfy.save();
+    //command.unqfy.save();
   } catch (error) {
     console.log("Hubo un problema, vuelva a intentar verificando los datos ingresados.", error);
   }

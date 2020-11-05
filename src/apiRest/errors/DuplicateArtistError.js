@@ -1,17 +1,9 @@
 class DuplicateArtistError extends Error {
-
-    constructor(error,res) {
-        super();
-        this.name = "Dupliate Artist Error";
-        this.error = error;
-        this.res = res;
+    constructor() {
+        super("Dupliate Artist Error");
+        this.status = 409;
+        this.errorCode = 'RESOURCE_ALREADY_EXISTS';
     }
-
-    exception() { 
-        this.res.status(409);
-        this.res.json({ status: 409, errorCode: "RESOURCE_ALREADY_EXISTS" });
-        next(this.error);
-    } 
 }
 
 module.exports = DuplicateArtistError; 
