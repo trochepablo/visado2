@@ -39,15 +39,16 @@ const SAVE_FILENAME = 'data.json';
 
 */
 
-function main() {
+async function main() {
   try {
     const commandIn = process.argv.slice(2).shift(); // obtengo el commando enviado por parametro, que es el tercer argumento
     const command = commands.get(commandIn.toUpperCase()).prototype; // obtengo la clase del comando por polimorfismo
     const unqFy = unqfyInstance.getUNQfy();
     command.setUNQfy(unqFy);
     const params = process.argv.slice(3);
-    command.execute(params); // ejecuto comando y envio el resto de los argumentos
-    //command.unqfy.save();
+    await command.execute(params); // ejecuto comando y envio el resto de los argumentos
+    command.unqfy.save();
+    console.log("ya me guarde")
   } catch (error) {
     console.log("Hubo un problema, vuelva a intentar verificando los datos ingresados.", error);
   }

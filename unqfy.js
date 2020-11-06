@@ -502,11 +502,7 @@ class UNQfy {
   async populateAlbumsForArtist(artistName) {
     const artist = this.searchArtistByName(artistName);
     const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
-    .then(albums => 
-      albums.map(album => new Album(album.name, album.release_date))
-    );
-    albums.forEach(album => this.addAlbum(artist.id, album));
-    this.save();
+    albums.forEach(album => this.addAlbum(artist.id, new Album(album.name, new Date(album.release_date).getFullYear())));
   }
 
   searchByName(name) {

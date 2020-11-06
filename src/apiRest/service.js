@@ -46,9 +46,10 @@ function errorHandler(error, req, res, next) {
     const isHandlerError = errors.find(error => error === error);
     if (isHandlerError) {
         res.status(error.status);
-        return res.json({ status: error.status, errorCode: error.errorCode });
+        res.json({ status: error.status, errorCode: error.errorCode });
     } else {
-        next(error);
+        res.status(500);
+        res.json({ status: 500, errorCode: "INTERNAL_SERVER_ERROR" });
     }
 }
 

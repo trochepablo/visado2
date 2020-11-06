@@ -1,9 +1,9 @@
 const Command = require('../Command');
 
 class PopulateAlbumsForArtistCommand extends Command {
-    execute(args) {
+    async execute(args) {
         //const params = this.paramsBuilder(args);
-        this.unqfy.populateAlbumsForArtist(args);
+        await this.unqfy.populateAlbumsForArtist(args);
     }
 }
 
