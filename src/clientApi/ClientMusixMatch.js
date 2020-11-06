@@ -5,63 +5,72 @@ const BASE_URL = 'http://api.musixmatch.com/ws/1.1';
 class ClientMusixMatch {
 
     constructor() {
-        this.options = {
-            uri: BASE_URL,
-            qs: {
-                apikey: '34d23db08e5454c8921a817389b8cf19',
-            },
-            json: true // Automatically parses the JSON string in the response
-        };
+        this.apikey = '34d23db08e5454c8921a817389b8cf19'
     }
 
 
-    lyrics(id) {
-        this.options.uri = `http://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id=${id}`;
+    async lyrics(title) {
 
-        rp.get(
-            this.options
+        const optionNew = {
+            uri: BASE_URL + '/track.lyrics.get',
+            qs: {
+                apikey: this.apikey,
+                track_id: await this.getLyrics(title)
+            },
+            json: true // Automatically parses the JSON string in the response
+        };
+
+        return rp.get(
+            optionNew
         ).then((response) => {
-            console.log(id);
+
             const header = response.message.header;
             const body = response.message.body;
 
             if (header.status_code !== 200) {
-                throw new Error('status code != 200');
+                throw new Error(`${header.status_code}: Not Found `);
             }
 
             const lyrics = body.lyrics.lyrics_body;
-            console.log(lyrics);
+
             return lyrics;
+
         }).catch((error) => {
-            console.log('algo salio mal', error);
+            throw error
         });
     }
 
-    getLyrics(title) {
+    async getLyrics(title) {
 
-        this.options.uri = `http://api.musixmatch.com/ws/1.1/track.search?q_track=${title}`;
+        const optionNew = {
+            uri: BASE_URL + '/track.search',
+            qs: {
+                apikey: this.apikey,
+                q_track: title
+            },
+            json: true // Automatically parses the JSON string in the response
+        };
 
-        rp.get(
-            this.options
+        return rp.get(
+            optionNew
         ).then((response) => {
-            console.log(title);
+
             const header = response.message.header;
             const tracks = response.message.body.track_list;
 
             if (header.status_code !== 200) {
-                throw new Error('status code != 200');
+                throw new Error(`${header.status_code}: Not Found`);
             }
 
             const id = tracks[0].track.track_id;
 
-            return this.lyrics(id);
+            return id
 
         })
-        .catch((error) => {
-          console.log('algo salio mal', error);
-        });
+            .catch((error) => {
+                throw error
+            });
     }
-
 
 }
 

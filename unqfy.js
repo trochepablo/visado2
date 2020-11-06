@@ -522,13 +522,9 @@ class UNQfy {
     return this.playlists.filter(p => p.getName() === name && p.getDuration() < durationLT && p.getDuration() > durationGT);
   }
 
-  getLyrics(trackID) {
+  async getLyrics(trackID) {
     const track = this.getTrackById(trackID); 
-    //console.log( track.getLyrics(track.getName()));
-    return {
-             Name: track.getName(),
-             lyrics: track.getLyrics(track.getName())
-           };
+    return await track.getLyrics()
   }
 
   save() {

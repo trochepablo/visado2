@@ -82,9 +82,8 @@ class Track {
     this.numberOfTimesListened = this.numberOfTimesListened + 1;
   }
 
-  getLyrics() {
-    console.log(musixMatch.lyrics(15953433));
-    return musixMatch.getLyrics(this.name);
+  async getLyrics() {
+    return await musixMatch.lyrics(this.name);
   }
 }
 
