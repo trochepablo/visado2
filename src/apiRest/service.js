@@ -177,11 +177,11 @@ albums.get('/albums', (req, res, next) => {
     res.status(200).json(albums);
 });
 
-async function getLyrics(trackId,req,res,trackName) {
+async function getLyrics(trackId, req, res, trackName) {
     return await req.unqfy.getLyrics(trackId).then(value => res.status(200).json({
         Name: trackName,
         lyrics: value
-        }));
+    }));
 }
 
 tracks.get('/tracks/:trackId/lyrics', (req, res, next) => {
@@ -189,9 +189,9 @@ tracks.get('/tracks/:trackId/lyrics', (req, res, next) => {
     const trackName = req.unqfy.getTrackById(trackId).name;
 
     try {
-      return   getLyrics(trackId,req,res,trackName);
+        return getLyrics(trackId, req, res, trackName);
     } catch (error) {
-      throw next(new theSongYouAreLookingForDoesNotExist());
+        throw next(new theSongYouAreLookingForDoesNotExist());
     }
 
 });

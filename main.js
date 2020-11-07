@@ -48,7 +48,6 @@ async function main() {
     const params = process.argv.slice(3);
     await command.execute(params); // ejecuto comando y envio el resto de los argumentos
     command.unqfy.save();
-    console.log("ya me guarde")
   } catch (error) {
     console.log("Hubo un problema, vuelva a intentar verificando los datos ingresados.", error);
   }

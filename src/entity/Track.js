@@ -83,7 +83,7 @@ class Track {
   }
 
   async getLyrics() {
-    return await musixMatch.lyrics(this.name);
+    return await musixMatch.getLyrics(this.name);
   }
 }
 

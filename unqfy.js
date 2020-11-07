@@ -203,7 +203,6 @@ class UNQfy {
 
   getPlaylistById(id) {
     const playlist = this.playlists.filter(p => p.id === id)[0];
-    console.log(playlist);
     return playlist;
   }
 
@@ -230,12 +229,11 @@ class UNQfy {
 
   getArtistAlbumTrack(id) {
     const albums = this.artists.filter(a => this.isAlbumTrack(id, a.albums))[0];
-    console.log(albums)
     return albums;
   }
 
   isAlbumTrack(id, albums) {
-    return albums.some(a =>{ this.isTrack(id, a.tracks); console.log(a.tracks,id)});
+    return albums.some(a =>{ this.isTrack(id, a.tracks);});
   }
 
 
@@ -260,7 +258,6 @@ class UNQfy {
 
   removeTrack(id) {
     const artist = this.getArtistAlbumTrack(id);
-    console.log(artist)
     this.updateAlbums(id, artist.albums);
   }
 
@@ -311,11 +308,9 @@ class UNQfy {
   // genres: array de generos(strings)
   // retorna: los tracks que contenga alguno de los generos en el parametro genres
   getTracksMatchingGenres(genresTrack) {
-    console.log(genresTrack)
     const albumes = this.artists.flatMap(artist => artist.albums);
     const tracks = albumes.flatMap(album => album.tracks);
     const trackInGenres = tracks.filter(t => t.genres.some(g => genresTrack.includes(g)));
-    console.log(trackInGenres)
     return trackInGenres;
   }
 
@@ -343,7 +338,6 @@ class UNQfy {
       const newPlaylist = new Playlist(idPlaylist, name, genresToInclude);
       ///console.log(newPlaylist);
       const tracksInGenres = this.getTracksMatchingGenres(genresToInclude);
-      console.log(newPlaylist);
       newPlaylist.generateListByTracks(tracksInGenres, maxDuration);
       this.addPlaylist(newPlaylist);
       return newPlaylist;
@@ -353,7 +347,6 @@ class UNQfy {
   }
   
   isTrack(id, tracks) {
-    console.log(id,tracks)
     return tracks.some(t => t.id === id);
   }
 
@@ -501,7 +494,7 @@ class UNQfy {
 
   async populateAlbumsForArtist(artistName) {
     const artist = this.searchArtistByName(artistName);
-    const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName)
+    const albums = await spotifyClientInstance.getAlbumsArtistByName(artistName);
     albums.forEach(album => this.addAlbum(artist.id, new Album(album.name, new Date(album.release_date).getFullYear())));
   }
 
@@ -514,17 +507,12 @@ class UNQfy {
   }
 
   searchPlaylist(name, durationLT ,durationGT) {
-    console.log(typeof name)
-    console.log(name === this.playlists[0].name);
-    console.log(typeof this.playlists[0].name);
-    console.log(this.playlists[0]);
-    console.log(this.playlists.filter(p => p.getName().toString() === name ));
     return this.playlists.filter(p => p.getName() === name && p.getDuration() < durationLT && p.getDuration() > durationGT);
   }
 
   async getLyrics(trackID) {
     const track = this.getTrackById(trackID); 
-    return await track.getLyrics()
+    return await track.getLyrics();
   }
 
   save() {

@@ -9,13 +9,13 @@ class ClientMusixMatch {
     }
 
 
-    async lyrics(title) {
+    async getLyrics(title) {
 
         const optionNew = {
             uri: BASE_URL + '/track.lyrics.get',
             qs: {
                 apikey: this.apikey,
-                track_id: await this.getLyrics(title)
+                track_id: await this.getTrackIdLyrics(title)
             },
             json: true // Automatically parses the JSON string in the response
         };
@@ -40,7 +40,7 @@ class ClientMusixMatch {
         });
     }
 
-    async getLyrics(title) {
+    async getTrackIdLyrics(title) {
 
         const optionNew = {
             uri: BASE_URL + '/track.search',
